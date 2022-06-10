@@ -39,13 +39,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 //    payload:[1,2,3,4,5,6]
 //  })
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
     <Provider store={myStore}> 
+  {/* <React.StrictMode> */}
     <App />
+  {/* </React.StrictMode>  */}
     </Provider>
-    </BrowserRouter>
-  </React.StrictMode> ,
+    </BrowserRouter>,
 );
 
 // If you want to start measuring performance in your app, pass a function

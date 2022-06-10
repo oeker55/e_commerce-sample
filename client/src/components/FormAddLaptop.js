@@ -1,32 +1,30 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 
 import TextField from "@mui/material/TextField";
 
-import { Container } from "@mui/system";
-import { Paper, Typography,Button } from "@mui/material";
+import {  Container } from "@mui/system";
+import { Paper, Typography, Button } from "@mui/material";
 import useStyles from "../styles";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 
+import { addLaptop, updateLaptop } from "../actions/laptopActions";
 
-import { addLaptop } from "../actions/laptopActions";
+import MuiAlert from "@mui/material/Alert";
+import { useNavigate, useParams } from "react-router-dom";
 
-
-import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-
-
-
 export const FormAddLaptop = () => {
+  const { id } = useParams(null);
+  const [isDone, setIsDone] = useState(false);
+  const { fetched,fetching, err } = useSelector((state) => state.laptops);
 
-  const dispatch = useDispatch();
-  const errorMessage = useSelector((state)=>state.laptops.err)
-  const fetched = useSelector((state)=>state.laptops.fetched)
- 
   const [laptop, setLaptop] = useState({
     title: "",
     cover: "",
@@ -38,14 +36,45 @@ export const FormAddLaptop = () => {
     os: "",
     price: "",
   });
-  const handleSubmit =(e)=>{
-      e.preventDefault()
+  const willUpdateLaptop = useSelector((state) =>
+    id ? state.laptops.allLaptops.find((laptop) => laptop._id === id) : null
+  );
+  useEffect(() => {
+    if (willUpdateLaptop) {
+  
+      setLaptop(willUpdateLaptop);
+    }
+  }, [id, willUpdateLaptop]);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    dispatch(addLaptop(laptop));
-    
-  }
-  const clear = (e)=>{
+  useEffect(() => {
+    console.log("use Effect isDone", isDone);
+    console.log("use effect fetched", fetched);
+    console.log("use effect errorMessage", err);
+    console.log("use effect fetching", fetching);
+    if (fetched && isDone) {
+      setTimeout(() => {
+        navigate("/laptops");
+      }, 3000);
+    }
+  }, [navigate, fetched,fetching,isDone,err]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setIsDone(true);
+    if (!id) {
+      dispatch(addLaptop(laptop));
+
+      console.log("fetched", fetched);
+      console.log("isDone", isDone);
+    } else {
+      dispatch(updateLaptop(id, laptop));
+    }
+  };
+  const clear = (e) => {
     setLaptop({
       title: "",
       cover: "",
@@ -56,22 +85,33 @@ export const FormAddLaptop = () => {
       ram_memory: "",
       os: "",
       price: "",
-    })
-  }
+    });
+  };
 
-  
   const classes = useStyles();
+
   return (
-    <Container maxWidth="sm" sx={{ border: "5px solid #757ce8",borderRadius:"10px" ,padding:"20px" }}>
+  
+   
+    <Container
+      maxWidth="sm"
+      sx={{
+        border: "5px solid #757ce8",
+        borderRadius: "10px",
+        padding: "20px",
+      }}
+    >
       <Paper sx={{ border: "blue" }}>
         <form onSubmit={handleSubmit}>
           <Typography
-            sx={{ marginBottom: "25px", textAlign: "center" }}
+
+          sx={{marginBottom:"15px"}}
+          
             className={classes.formHeader}
-            variant="h3"
+            variant="h4"
           >
             {" "}
-            Add New Laptop{" "}
+            {id? "Edit":"Add New"} Laptop{" "}
           </Typography>
 
           <TextField
@@ -92,8 +132,10 @@ export const FormAddLaptop = () => {
             fullWidth
             label="Cover Url"
           />
-          {/* <img width="450px" src={laptop.cover} alt="Laptop Cover Image"/> */}
-          
+          <Box>
+            <img width="50%" src={laptop.cover}  alt="Laptop Cover" />
+          </Box>
+
           <TextField
             sx={{ marginBottom: "15px" }}
             color="success"
@@ -112,6 +154,7 @@ export const FormAddLaptop = () => {
             fullWidth
             label="Cpu"
           />
+
           <TextField
             sx={{ marginBottom: "15px" }}
             color="success"
@@ -161,29 +204,48 @@ export const FormAddLaptop = () => {
             fullWidth
             label="Price"
           />
-          <Button color="primary" type="submit" size="large" variant="contained" fullWidth gutterBottom > Add </Button>
-          <Button color="secondary" onClick={clear} size="large" variant="contained" fullWidth> Clear </Button>
+          <Button
+          className={classes.button}
+          sx={{marginBottom:"10px"}}
+          color="primary"
+          type="submit"
+          size="large"
+          variant="contained"
+          fullWidth
+          >
+            {" "}
+            Add{" "}
+          </Button>
+          <Button
+            className={classes.button}
+            color="secondary"
+            onClick={clear}
+            size="large"
+            variant="contained"
+            fullWidth
+          >
+            {" "}
+            Clear{" "}
+          </Button>
         </form>
       </Paper>
-      <br/>
-   
-   
-      <hr/>
-      
-     
-    
-      { fetched ? <Alert  severity="success">Succesfully Saved..<br/> 
-      Redirecting to Laptops ..</Alert>  : !fetched && 
-      errorMessage ? <Alert  severity="error">{errorMessage}</Alert>:""}
-    
+      <br />
 
+      <hr />
+      {fetching ? <LinearProgress color="success" />:""}
 
-
-
-      
-    
+      {fetched && isDone ? (
+        <Alert severity="success">
+          Succesfully Saved..
+          <br />
+          Redirecting to Laptops .. <LinearProgress color="success" />
+        </Alert>
+      ) :""}
+      {!fetched && err && !fetching? <Alert severity="error">{err}</Alert> :""}
     </Container>
+ 
 
-  )}
+  );
+};
 
 export default FormAddLaptop;

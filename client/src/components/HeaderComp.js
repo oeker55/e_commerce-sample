@@ -20,7 +20,8 @@ const HeaderComp = () => {
           variant="h2"
           align="center"
           color="text.primary"
-          gutterBottom
+          
+          sx={{color:"#dc5e24",}}
         >
           Pricing
         </Typography>
@@ -29,6 +30,7 @@ const HeaderComp = () => {
           align="center"
           color="text.secondary"
           component="p"
+          sx={{color:"#dc5e24",}}
         >
           Quickly build an effective pricing table for your potential customers
           with this layout. It&apos;s built with default MUI components with

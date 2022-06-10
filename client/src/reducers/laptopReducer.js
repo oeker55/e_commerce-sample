@@ -1,3 +1,4 @@
+import * as actionType from  "../constants/actionTypes"
 const initialState = {
   err: "",
   fetching: false,
@@ -18,28 +19,37 @@ const initialState = {
 };
 
 const laptopReducer = (state = initialState, { type, payload }) => {
+ 
   switch (type) {
-    case "FETCH_LAPTOPS_PENDING":
+    case actionType.FETCH_LAPTOPS_PENDING:
       return { ...state, fetched: false, fetching: true };
-    case "FETCH_LAPTOPS_FULFILLED":
+    case actionType.FETCH_LAPTOPS_FULFILLED:
       return { ...state, allLaptops: payload, fetched: true, fetching: false };
-    case "FETCH_LAPTOPS_REJECTED":
+    case actionType.FETCH_LAPTOPS_REJECTED:
       return { ...state, fetched: false, fetching: false, err: payload };
     //////////////////////////////////////////////////////////////////////////////////////
-    case "ADD_LAPTOP_PENDING":
+    case actionType.ADD_LAPTOP_PENDING:
       return { ...state, fetched: false, fetching: true };
-    case "ADD_LAPTOP_FULLFILLED":
+    case actionType.ADD_LAPTOP_FULFILLED:
       return { ...state, laptop: payload, fetched: true, fetching: false };
-    case "ADD_LAPTOP_REJECTED":
+    case actionType.ADD_LAPTOP_REJECTED:
       return { ...state, fetched: false, fetching: false, err: payload };
     //////////////////////////////////////////////////////////////////////////////////////////////
-    case "UPDATE_LAPTOP_PENDING":
+    case actionType.UPDATE_LAPTOP_PENDING:
       return { ...state, fetched: false, fetching: true };
-    case "UPDATE_LAPTOP_FULLFILLED":
-      return { ...state, laptop: payload, fetched: true, fetching: false };
-    case "UPDATE_LAPTOP_REJECTED":
+    case actionType.UPDATE_LAPTOP_FULFILLED:
+     const updatedLaptop = state.allLaptops.map((laptop)=>laptop._id === payload._id ? payload:laptop)
+      return { ...state, laptop: updatedLaptop, fetched: true, fetching: false };
+    case actionType.UPDATE_LAPTOP_REJECTED:
       return { ...state, fetched: false, fetching: false, err: payload };
     //////////////////////////////////////////////////////////////////////////////////////////////
+    case actionType.DELETE_LAPTOP_PENDING:
+      return { ...state, fetched: false, fetching: true };
+    case actionType.DELETE_LAPTOP_FULFILLED:
+     
+      return { ...state, laptop: payload, fetched: true, fetching: false, allLaptops : state.allLaptops.filter((laptop)=>laptop._id !== payload._id)};
+    case actionType.DELETE_LAPTOP_REJECTED:
+      return { ...state, fetched: false, fetching: false, err: payload };
 
     default:
       return state;

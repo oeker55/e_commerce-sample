@@ -5,7 +5,12 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles(() => ({
   formHeader : {
     marginBottom :"25px",
-    color: "blue"
+    color: "#1862d9",
+    border:"5px solid #1862d9",
+  
+    marginBottom: "25px",
+     textAlign: "center"
+   
   },
   textField: {
   
@@ -15,6 +20,10 @@ const useStyles = makeStyles(() => ({
      
       paddingTop: "100%",
       
+    },
+    button:{
+      marginBottom:"20px"
+
     }
 }))
 
